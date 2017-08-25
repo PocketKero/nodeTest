@@ -7,13 +7,14 @@ module.exports = function(inputPath, filename)
 {
 	let str = "";
 	let data = fs.readFileSync(inputPath);
-	let res = csvSync(data);
+	let inputBuffer = new Buffer(data, 'binary');
+	let res = csvSync(iconv.decode(inputBuffer, "SJIS"));
 	if(res[14][0] == '電子ファイル名')
 	{
 		res[14][1] = filename;
 		res.forEach(row => str += row.join(',') + '\n');
-		let buffer = iconv.encode(str, "SJIS");
-		fs.writeFile(inputPath, buffer);
+		let outputBuffer = iconv.encode(str, "SJIS");
+		fs.writeFile(inputPath, outputBuffer);
 	}
 	else
 	{
