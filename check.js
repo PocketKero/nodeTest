@@ -50,7 +50,7 @@ module.exports = (uploadDir) => {
 					catch (e) {
 						throw new Error("　　エントリーシートの表記と実際のファイルの拡張子が一致しないよ");
 					}
-					if (ext != extention) {
+					if (fileExt != ext) {
 						throw new Error("　　エントリーシート15行目と17行目の拡張子が一致しないよ" + "\n　　15行目の拡張子…" + fileExt + "\n　　17行目の拡張子…" + ext);
 					}
 				}
