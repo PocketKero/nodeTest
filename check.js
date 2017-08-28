@@ -2,42 +2,32 @@
 const csv = require('csv');
 const parse = csv.parse;
 const iconv = require('iconv-lite');
-const xlsx = require('xlsx');
 const csvSync = require('csv-parse/lib/sync');
 const async = require('async');
 const path = require('path')
 
 module.exports = (uploadDir) => {
 
-	var __dirname;
-	var fileName;
+	let nowCount = 0;
 
-	var fileNames = [];
-
-	var nowCount = 0;
-
-	var str = new String("");
-
-	fileNames = fs.readdirSync(path.resolve(uploadDir));
-
-	fileNames = fileNames.filter((fileName) => {
+	const fileNames = fs.readdirSync(path.resolve(uploadDir)).filter((fileName) => {
 		return fileName !== 'check.js' && fileName !== 'node_modules' && !/^\..+$/.test(fileName)
 	})
 
 	async.forever((callback) => { /* 処理1 */
-		let data = fs.readFileSync(path.resolve(uploadDir, fileNames[nowCount], 'entry_sheet.csv'));
-		let buffer = new Buffer(data, 'binary');
-		data = csvSync(iconv.decode(buffer, "SJIS"));
+		let csvData = fs.readFileSync(path.resolve(uploadDir, fileNames[nowCount], 'entry_sheet.csv'));
+		let buffer = new Buffer(csvData, 'binary');
+		csvData = csvSync(iconv.decode(buffer, "SJIS"));
 		//console.log('CSVファイルの行数=' + data.length);
 		try {
 			if (fs.statSync(path.resolve(uploadDir, fileNames[nowCount], 'entry_sheet.csv'))) {
-				__dirname = fileNames[nowCount];
+				const __dirname = fileNames[nowCount];
 				// console.log(__dirname);
 				// console.log("エントリーシート検出");
-				let str = new String(data[14][1]);
-				let fileName = str.substring(0, str.indexOf('.'));
-				let fileExt = str.substring(str.indexOf('.'));
-				let ext = new String(data[16][1]);
+				const fileExt = path.extname(csvData[14][1]);
+				const fileName = path.basename(csvData[14][1], fileExt);
+				const ext = csvData[16][1];
+
 				if (fileName == __dirname && fs.statSync(path.resolve(uploadDir, __dirname, fileName+fileExt)) && fileExt == ext) {
 					// console.log("　　あってます");
 				} else {
