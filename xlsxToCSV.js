@@ -2,7 +2,6 @@
 const csv = require('fast-csv');
 const jconv = require('jconv');
 const xlsx = require('xlsx');
-const utils = xlsx.util;
 const path = require('path');
 
 module.exports = function(inputPath, outputPath)
